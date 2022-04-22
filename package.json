@@ -1,0 +1,19 @@
+{
+  "name": "@vidaniello/webservices-explorer",
+  "version": "1.0.0-SNAPSHOT",
+  "description": "A way to pubblish webservice deployed in a network",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vidaniello/webservices-explorer.git"
+  },
+  "author": "github.com/vidaniello",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/vidaniello/webservices-explorer/issues"
+  },
+  "homepage": "https://github.com/vidaniello/webservices-explorer#readme"
+}
