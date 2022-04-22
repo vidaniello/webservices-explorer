@@ -1,0 +1,6 @@
+{
+    "workdirName": "vidaniello_webservices-explorer",
+    "defaultHttpPort": "3010",
+    "defaultMongoHostname": "localhost",
+    "defaultMongoPort": "27017"
+}
