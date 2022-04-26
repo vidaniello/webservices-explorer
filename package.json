@@ -8,7 +8,8 @@
     "test": "node server.js",
     "testInstall": "node install.js",
     "testMongo": "node test/mongoTests.js",
-    "testJs": "node test/jsTests.js"
+    "testJs": "node test/jsTests.js",
+    "testEvents": "node test/eventsTest.js"
   },
   "publishConfig": {
     "access": "public"

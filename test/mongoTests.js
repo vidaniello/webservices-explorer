@@ -1,15 +1,91 @@
-const { Collection, Db } = require('mongodb');
+const { Collection, Db, MongoClient } = require('mongodb');
 
-var dbClient = require('mongodb').MongoClient;
+
 
 var dbName = "testMongoFromNode";
 var collectionName = "customers";
 var url = `mongodb://172.16.16.65:27017/${dbName}`;
+let d = '✅';
+
+/** @type {MongoClient} */
+var dbClient = new MongoClient(url);
+/** @type {Db} */
 var db = null;
 
-dbClient.connect(url, function(err, _db) {
+
+process.on('exit', ()=>{
+    console.log(`Exit event intercepted...`);
+    if(!!dbClient && !!dbClient.topology && !!dbClient.topology.isConnected()){
+        dbClient.close(()=>{});
+        console.log(`Database connection closed ${d}`);
+    }
+});
+
+
+async function startTest(){
+
+    try {
+        //connection to DB
+        await dbClient.connect();
+
+        db = dbClient.db();
+
+
+        //Iterate collections
+        /** @type {Collection[]} */
+        let c = await db.collections();
+
+        c.forEach((itm)=>{
+            console.log("collection name: "+itm.collectionName);
+        });
+
+
+        //Insert new
+
+        /** @type {Collection} */
+        let custColl = db.collection(collectionName);
+
+        var myobj = { name: "Apple inc", address: "Cupertino" };
+
+        myobj = await custColl.insertOne(myobj);
+
+    } catch (err) {
+        throw err;
+    } finally {
+        process.exit();
+    }
+}
+
+startTest();
+
+/*
+dbClient.connect(function(err, _db) {
     if (err) {_db.close();throw err;}
     db = _db.db();
+
+    db.collections().then(coll=>{
+        
+        /** @type {Collection[]} */
+        /*
+        let c = coll;
+
+        c.forEach((itm)=>{
+            console.log("collection name: "+itm.collectionName());
+        });
+        
+    });
+
+    /** @type {Collection} *//*
+    let custColl = db.collection(collectionName);
+
+    var myobj = { name: "Apple inc", address: "Cupertino" };
+    myobj = insertOneSync(myobj, custColl);
+
+    /** @type {Collection} *//*
+    let wrongtColl = db.collection('wrongColle');
+
+    
+
     //console.log("Database created!");
     /*
     db.db().createCollection(collectionName, function(err, res) {
@@ -29,44 +105,6 @@ dbClient.connect(url, function(err, _db) {
     */
     
    // db.close();
-
+/*
   });
-
-/**
- * 
- * @param {Db} database
- * @param {string} collectionName 
- * @returns {Collection}
- */
-function getOrCreateCollection(database, collectionName){
-    //database.
-}
-
-
-
-
-/**
- * 
- * @param {import('mongodb').Document} object 
- * @param {Collection} mongoCollection 
- * @returns {Promise}
- */
-function insertOneAsync(object, mongoCollection) {
-    return mongoCollection.insertOne(object);
-}
-
-/**
- * 
- * @param {import('mongodb').Document} object 
- * @param {Collection} mongoCollection 
- * @returns {boolean}
- */
-function insertOneSync(object, mongoCollection) {
-    insertOneAsync(object, mongoCollection)
-        .then(res=>{})
-        .catch(err=>{});
-}
-
-var p = new Promise(res => {
-    res()
-});
+*/

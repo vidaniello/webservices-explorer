@@ -1,102 +1,106 @@
 #!/usr/bin/env node
 
 const prompt = require('prompt');
-//const util = require('util');
-//const readline = require('readline');
-//const rl = readline.createInterface({
-    //input: process.stdin,
-    //output: process.stdout
-//});
-//let question1 = util.promisify(rl.question).bind(rl);
-//let question2 = util.promisify(rl.question).bind(rl);
-/*
 const common = require('./common');
-
-console.log("INSTALL SCRIPT: Check dirs...");
-common.checkAndCreateDirs();
-*/
-
+prompt.message = `${common.config.promptInstallName}`;
 
 /** @type {string} */
-//let envContent = "# .env file generated with install script on "+new Date()+"\n";
-/** @type {string} */
-//let defHttpPort =   common.config.defaultHttpPort;
-/** @type {string} */
-//let defMongoHost =  common.config.defaultMongoHostname;
-/** @type {string} */
-//let defMongoPort =  common.config.defaultMongoPort;
+let envContent = ``;
 
-/** @type {string} */
-let defHttpPort = '3030';
-
-
-//console.log("INSTALL SCRIPT: answer questions, clean for default values...");
-
-/*
-async function allQuestions(){
-
-    
-    try{
-        let httpPort = await question1(`Wath is the http server port? (default ${defHttpPort})`);
-        if(httpPort!=='')
-            defHttpPort = httpPort;
-    } catch (err){ }
-
-    try{
-        let mongoHost = await question2(`Wath is the MongoDb hostname? (default ${defMongoHost})`);
-        if(mongoHost!=='')
-            defMongoHost = mongoHost;
-    } catch (err){ }
-
-    try{
-        let mongoPort = await question(`Wath is the MongoDb port? (default ${defMongoPort})`);
-        if(mongoPort!=='')
-            defMongoPort = mongoPort;
-    } catch (err){ }
-    
-    rl.close();
-}
-allQuestions();
-*/
-prompt.message = 'Ah';
-var schema = {
+let promptSchema = {
     properties: {
-      name: {
-        description: "Enter the name",
-        pattern: /^[a-zA-Z\s\-]+$/,
-        message: 'Name must be only letters, spaces, or dashes',
-        required: true
+      httpPort: {
+        description: `Wath is the http server port? `,
+        type: 'integer',
+        //pattern: /^[a-zA-Z\s\-]+$/,
+        default: `${common.config.defaultHttpPort}`,
+        //message: 'Name must be only letters, spaces, or dashes',
+        //required: true
       },
-      password: {
+      mongoHost: {
+        description: `Wath is the MongoDb hostname? `,
+        type: 'string',
+        //pattern: /^[a-zA-Z\s\-]+$/,
+        default: `${common.config.defaultMongoHostname}`,
+        //message: 'Name must be only letters, spaces, or dashes',
+        //required: true
+      },
+      mongoPort: {
+        description: `Wath is the MongoDb port? `,
+        type: 'integer',
+        //pattern: /^[a-zA-Z\s\-]+$/,
+        default: `${common.config.defaultMongoPort}`,
+        //message: 'Name must be only letters, spaces, or dashes',
+        //required: true
+      },
+      mongoUsername: {
+        description: `Wath is the MongoDb username? (default is empty)`,
+        type: 'string',
+        //pattern: /^[a-zA-Z\s\-]+$/,
+        default: ``,
+        //message: 'Name must be only letters, spaces, or dashes',
+        //required: true
+      },
+      mongoPassword: {
+        description: `Wath is the MongoDb password? (default is empty)`,
         hidden: true,
         replace: '*',
-        required: true,
-        message: 'Password must be letters',
+        default: ``,
+        //required: true,
       }
     }
   };
 
+function promptCallback(result){
 
-  prompt.start();
+  console.log('Command-line input received:');
+  console.log('  httpPort:      ' + result.httpPort);
+  console.log('  mongoHost:     ' + result.mongoHost);
+  console.log('  mongoPort:     ' + result.mongoPort);
+  console.log('  mongoUsername: ' + result.mongoUsername);
+  console.log('  mongoPassword: ' + '****');
 
-  prompt.get(schema, function (err, result) {
-    //
-    // Log the results.
-    //
-    console.log('Command-line input received:');
-    console.log('  name: ' + result.name);
-    console.log('  password: ' + result.password);
-  });
+  if(result.httpPort!=''){
+    envContent += `${common.config.httpPort_ENV_NAME}=${result.httpPort}\n`;
+  }
+  
+  if(result.mongoHost!=''){
+    envContent += `${common.config.dbHostname_ENV_NAME}=${result.mongoHost}\n`;
+  }
 
-/*
-for(let arg of process.argv){
-    if(arg.includes("="))
-        envContent += arg+"\n";
+  if(result.mongoPort!=''){
+    envContent += `${common.config.dbPort_ENV_NAME}=${result.mongoPort}\n`;
+  }
+
+  if(result.mongoUsername!=''){
+    envContent += `${common.config.dbUsername_ENV_NAME}=${result.mongoUsername}\n`;
+  }
+
+  if(result.mongoPassword!=''){
+    envContent += `${common.config.dbPassword_ENV_NAME}=${result.mongoPassword}\n`;
+  }
+};
+
+async function startInstallation(){
+  try{
+    console.log("INSTALL SCRIPT: Check dirs...");
+    common.checkAndCreateDirs();
+
+    prompt.start();
+
+    console.log("INSTALL SCRIPT: answer questions, clean for default values...");
+    let result = await prompt.get(promptSchema);
+    envContent = `# .env file generated with install script on ${new Date()}\n`;
+    promptCallback(result);
+    console.log("INSTALL SCRIPT: Write .env file...");
+    common.cleanAndWriteEnvFile(envContent);
+    console.log("INSTALL SCRIPT: Setup ended.");
+
+  } catch (err){
+    throw err;
+  }
 }
-*/
 
-//console.log("INSTALL SCRIPT: Write .env file...");
-//common.cleanAndWriteEnvFile(envContent);
+startInstallation();
 
 
-//console.log("INSTALL SCRIPT: Setup end.");
