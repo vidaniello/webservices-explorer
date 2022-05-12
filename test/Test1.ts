@@ -1,11 +1,11 @@
-import {Main} from '../src/Main';
+//import {Main} from '../src/Main';
 
 export class Test1{
 
     public static async test1(): Promise<void>{
         try{
             console.log("Test started");
-            Main.start(null);
+           
         } catch(err){
             console.error(err);
         }
