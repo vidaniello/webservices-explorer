@@ -1,17 +1,20 @@
 {
   "type": "commonjs",
   "name": "@vidaniello/webservices-explorer",
-  "version": "1.0.0-SNAPSHOT",
-  "description": "A way to pubblish webservice deployed in a network",
+  "version": "1.0.0",
+  "description": "A way to discover webservice deployed in a network",
   "main": "./dist/Main.js",
   "scripts": {
-    "build": "./scripts/build.sh",
-    "test": "node server.js",
-    "testInstall": "node install.js",
-    "testMongo": "node test/mongoTests.js",
-    "testJs": "node test/jsTests.js",
-    "testEvents": "node test/eventsTest.js",
-    "testMain": "./scripts/build.sh && node ./dist/Main.js"
+    "__build": "./scripts/build.sh",
+    "__build-test": "./scripts/build-test.sh",
+    "prebuild": "node clean-builds.js",
+    "build": "tsc",
+    "build-test": "npm run clean && tsc -p ./tsconfig-test.json",
+    "test-main": "node ./dist/main.js",
+    "test-test1": "node ./tests/test/test1.js",
+    "test-install": "node ./dist/install.js",
+    "": "",
+    "testMongo": "node test/mongoTests.js"
   },
   "publishConfig": {
     "access": "public"
@@ -38,10 +41,12 @@
     "node": ">=14.0.0"
   },
   "bin": {
-    "vidaniello.webservices-explorer.run": "server.js",
-    "vidaniello.webservices-explorer.install": "install.js"
+    "vidaniello.webservices-explorer.run": "./dist/main.js",
+    "vidaniello.webservices-explorer.install": "./dist/install.js"
   },
   "devDependencies": {
-    "@types/node": "^17.0.32"
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.32",
+    "@types/prompt": "^1.1.2"
   }
 }

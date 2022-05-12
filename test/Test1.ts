@@ -13,6 +13,6 @@ export class Test1{
 
 }
 
-if(__filename.endsWith('test/Test1.ts'))
+if(__filename.endsWith('tests/test/test1.js') || __filename.endsWith('tests\\test\\test1.js'))
     Test1.test1();
 

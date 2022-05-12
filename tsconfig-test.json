@@ -2,9 +2,14 @@
     "compilerOptions": {
         "target": "ES6",
         "module": "CommonJS",
-        //"sourceMap": true,
+        "sourceMap": true,
         "outDir": "tests",
         //"watch": true,
         //"allowJs": true
-    }
+        "esModuleInterop": true,
+        "resolveJsonModule": true
+    },"include": [
+        "./src",
+        "./test"
+    ]
 }

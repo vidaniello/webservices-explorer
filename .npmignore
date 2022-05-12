@@ -1,4 +1,5 @@
 test/
+tests/
 tsconfig.json
 tsconfig-test.json
 src/

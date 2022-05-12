@@ -4,9 +4,11 @@
         "module": "CommonJS",
         "sourceMap": true,
         "outDir": "dist",
-        "rootDir": "src"
+        "rootDir": "src",
         //"watch": true,
         //"allowJs": true
+        "esModuleInterop": true,
+        "resolveJsonModule": true
     },
     "exclude": ["./test"]
 }

@@ -1,2 +1,2 @@
 # webservices-explorer
-Explore deployed webservices
+Explore deployed webservices in a network.
