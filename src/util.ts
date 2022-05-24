@@ -79,5 +79,44 @@ export class Util {
         return ret;
     }
 
+    public static getMongoDbHostname(){
+        let ret = this.conf.defaultMongoHostname;
+        if(process.env[this.conf.dbHostname_ENV_NAME]!==undefined)
+            if(process.env[this.conf.dbHostname_ENV_NAME]!==null)
+                if(process.env[this.conf.dbHostname_ENV_NAME]!=='')
+                    ret = process.env[this.conf.dbHostname_ENV_NAME];
+        return ret;
+    }
+
+    public static getMongoDbPort(){
+        let ret = this.conf.defaultMongoPort;
+        if(process.env[this.conf.dbPort_ENV_NAME]!==undefined)
+            if(process.env[this.conf.dbPort_ENV_NAME]!==null)
+                if(process.env[this.conf.dbPort_ENV_NAME]!=='')
+                    ret = process.env[this.conf.dbPort_ENV_NAME];
+        return ret;
+    }
+
+    public static getMongoDbUsername(){
+        let ret = '';
+        if(process.env[this.conf.dbUsername_ENV_NAME]!==undefined)
+            if(process.env[this.conf.dbUsername_ENV_NAME]!==null)
+                if(process.env[this.conf.dbUsername_ENV_NAME]!=='')
+                    ret = process.env[this.conf.dbUsername_ENV_NAME];
+        return ret;
+    }
+
+    public static getMongoDbPassword(){
+        let ret = '';
+        if(process.env[this.conf.dbPassword_ENV_NAME]!==undefined)
+            if(process.env[this.conf.dbPassword_ENV_NAME]!==null)
+                if(process.env[this.conf.dbPassword_ENV_NAME]!=='')
+                    ret = process.env[this.conf.dbPassword_ENV_NAME];
+        return ret;
+    }
+
+    public static getMongoDbDatabase(){
+        return this.conf.databaseName;
+    }
 }
 //export default Util;
