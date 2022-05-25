@@ -17,7 +17,7 @@ export class Http{
 
         /**Initial interceptor */
         Http.app.use((req, res, next) => {
-            res.set('Cache-Control', 'no-cache, no-store, max-age=0')
+            res.set('Cache-Control', 'no-cache, no-store, max-age=0');
             res.set('Content-Type', 'application/json; charset=utf-8');
             next()
         });
@@ -36,6 +36,7 @@ export class Http{
         Http.app.get('/getService/:endpointName', Http.onGetService);
 
         Http.app.post('/newAlias', Http.onNewAlias);
+        Http.app.post('/newAlias/associate_to/:serviceName', Http.onNewAlias);
         Http.app.get('/getAlias/:aliasName', Http.onGetAlias);
         
         /* final interceptor
@@ -47,26 +48,34 @@ export class Http{
     }
 
     static onHomePage(req: Request, resp: Response){
-        resp.send('{"appStatus": "Ok! '+new Date()+'"}');
+        resp.send({appStatus: "Ok! "+new Date()});
     }
 
     static onGetDbConnectionState(req: Request, resp: Response){
-        resp.send('{"mongDbConnectionStatus": "'+Persistence.getConnectionState()+'"}');
+        resp.send({mongDbConnectionStatus: Persistence.getConnectionState()});
     }
 
     static onCloseApplication(req: Request, resp: Response){
-        resp.send('{"appStatus": "Closing app!"}');
+        resp.send({appStatus: "Closing app!"});
         process.exit();
     }
 
     static async onNewService(req: Request, resp: Response){
-        let toRet = await Persistence.addNewService(req.body);
-        resp.send(toRet);
+        try {
+            let toRet = await Persistence.addNewService(req.body);
+            resp.send(toRet);
+        } catch (error){
+            Http.onException(error, resp);
+        }
     }
 
     static async onGetService(req: Request, resp: Response, next: NextFunction){
-        let toRet = await Persistence.getService(req.params['endpointName']);
-        resp.send(toRet);
+        try {
+            let toRet = await Persistence.getService(req.params['endpointName']);
+            resp.send(toRet);
+        } catch (error){
+            Http.onException(error, resp);
+        }
 
         //If the response is chained
         //resp.write(/*JSON.stringify(*/toRet/*, null, 2)*/);
@@ -75,13 +84,33 @@ export class Http{
     }
 
     static async onNewAlias(req: Request, resp: Response){
-        let toRet = await Persistence.addNewAlias(req.body);
-        resp.send(toRet);
+        try {
+            let toRet = null;
+
+            if(req.params['serviceName']!==null && req.params['serviceName']!==''){
+                toRet = await Persistence.addNewAliasAndAssociateToService(req.body, req.params['serviceName']);
+            } else {
+                toRet = await Persistence.addNewAlias(req.body);
+            }
+
+            resp.send(toRet);
+        } catch (error){
+            Http.onException(error, resp);
+        }
     }
 
     static async onGetAlias(req: Request, resp: Response){
-        let toRet = await Persistence.getAlias(req.params['aliasName']);
-        resp.send(toRet);
+        try {
+            let toRet = await Persistence.getAlias(req.params['aliasName']);
+            resp.send(toRet);
+        } catch (error){
+            Http.onException(error, resp);
+        }
     }
 
+
+    static onException(exception: Error | any, resp: Response){
+        resp.status(StatusCodes.BAD_REQUEST)
+            .send({exceptionType: exception.name, exceptionCode: exception.code, exceptionMessage: exception.message/*, stack: JSON.stringify(error.stack)*/});
+    }
 }

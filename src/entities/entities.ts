@@ -1,29 +1,76 @@
 import {Types, Schema, Model, model, Document, PopulatedDoc} from 'mongoose';
 
+/** Alias */
 export class Alias {
     _id: string;
     aliasName: string;
-    descrizione: string;
-    abilitato: boolean;
-    service: string | Service;
+    serviceParent: Service;
 }
 
+type AliasDocumentProps = {
+    serviceParent: PopulatedDoc<Document<string, any, Service> & Service> | null;
+};
+
+type AliasModelType = Model<Alias, {}, AliasDocumentProps>;
+
+const aliasSchema = new Schema<Alias, AliasModelType>({
+    _id: {type: String, alias: 'aliasName'},
+    serviceParent: {type: String, ref: ()=>ServiceModel}
+}, {versionKey: false, timestamps: true, id: false, toObject: {virtuals: true}});
+
+export const AliasModel = model<Alias, AliasModelType>('Alias', aliasSchema);
+
+
+
+
+/** Endpoint */
+export class Endpoint{
+    url: string;
+    enabled: boolean;
+}
+const endpointSchema = new Schema<Endpoint>({
+    url: {type: String},
+    enabled: {type: Boolean}
+}, {_id: false});
+
+
+
+
+/** Service functions */
+export class ServiceFunction{
+    path: string;
+    description: string;
+
+}
+
+
+
+/** Service */
 export class Service{
     _id: string;
     serviceName: string;
-    endpointsDeployed: Types.Array<string>;
-    descrizione: string;
+    endpointsDeployed: Endpoint[];
+    description: string;
     //aliases: [string | Alias];
-    aliases: [PopulatedDoc<Document<string, any, Alias> & Alias> | null]
+    serviceNameAliases: Alias[];
+    functions: ServiceFunction[];
 }
 
-const serviceSchema = new Schema<Service>({
+type ServiceDocumentProps = {
+    endpointsDeployed: Types.DocumentArray<Endpoint>;
+    serviceNameAliases: [PopulatedDoc<Document<string, any, Alias> & Alias> | null];
+};
+type ServiceModelType = Model<Service, {}, ServiceDocumentProps>;
+
+const serviceSchema = new Schema<Service, ServiceModelType>({
     _id: {type: String, alias: 'serviceName'},
-    endpointsDeployed: {type: [String]},
-    descrizione: {type: String},
-    aliases: [{type: String, ref: ()=>AliasModel}]
+    endpointsDeployed: [endpointSchema],
+    description: {type: String},
+    serviceNameAliases: [{type: String, ref: ()=>AliasModel}]
+    
 }, {versionKey: false, timestamps: true, id: false, toObject: {virtuals: true}});
-export const ServiceModel: Model<Service> = model<Service>('Service', serviceSchema);
+export const ServiceModel = model<Service, ServiceModelType>('Service', serviceSchema);
+
 
 /*
 serviceSchema.virtual('come').get(function(){
@@ -36,16 +83,11 @@ export interface PoupolatedService {
 }
 */
 
-const aliasSchema = new Schema<Alias>({
-    _id: {type: String, alias: 'aliasName'},
-    descrizione: {type: String},
-    abilitato: {type: Boolean},
-    service: {type: String, ref: ()=>ServiceModel}
-}, {versionKey: false, timestamps: true, id: false, toObject: {virtuals: true}});
-export const AliasModel: Model<Alias> = model<Alias>('Alias', aliasSchema);
+
 
 /*
 export interface PoupolatedAlias {
     service : Document<unknown, any, Service> & Service | null
 }
 */
+

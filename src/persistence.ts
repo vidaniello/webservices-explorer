@@ -42,11 +42,31 @@ export class Persistence{
         let newService = new ServiceModel(_newService);
         let toret = await newService.save();
         return toret.toObject();
+      }
+
+    public static async getService(serviceName: string): Promise<Service>{
+        let service = await ServiceModel.findById(serviceName).populate('serviceNameAliases');
+        if(service!==null)
+            return service.toObject();
+        else
+            throw new Error(`service with name '${serviceName}' not exsist!`);
     }
 
-    public static async getService(endpointName: string): Promise<Service>{
-        let service = await ServiceModel.findById(endpointName).populate('aliases');
-        return service.toObject();
+    public static async addNewAliasAndAssociateToService(_newAlias: Alias, serviceName: string): Promise<Alias>{
+        let findedService = await ServiceModel.findById(serviceName);
+
+        if(findedService==null)
+            throw new Error(`service with name '${serviceName}' not exsist!`);
+
+        _newAlias.serviceParent = findedService;
+        let newAlias = await Persistence.addNewAlias(_newAlias);
+
+        findedService.serviceNameAliases.push(newAlias);
+
+        findedService.save();
+
+        newAlias = AliasModel.findById(newAlias._id).populate('serviceParent');
+        return newAlias;
     }
 
     public static async addNewAlias(_newAlias: Alias): Promise<Alias>{
@@ -56,7 +76,11 @@ export class Persistence{
     }
 
     public static async getAlias(aliasName: string): Promise<Alias>{
-        let alias = await AliasModel.findById(aliasName);
-        return alias.toObject();
+        let alias = await AliasModel.findById(aliasName).populate('serviceParent');
+        if(alias!==null)
+            return alias.toObject();
+        else
+            throw new Error(`alias with name '${aliasName}' not exsist!`);
     }
+
 }
