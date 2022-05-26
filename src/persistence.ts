@@ -1,6 +1,6 @@
 import {Mongoose, connect, ConnectionStates} from 'mongoose';
 import {Util} from './util';
-import { Alias, AliasModel, Service, ServiceModel} from './entities/entities';
+import { Alias, AliasModel, Service, ServiceModel, serviceParent, serviceNameAliases, ObjectType, ObjectTypeModel} from './entities/entities';
 
 /**
  * Persistence contetex to mongo DB.
@@ -45,7 +45,7 @@ export class Persistence{
       }
 
     public static async getService(serviceName: string): Promise<Service>{
-        let service = await ServiceModel.findById(serviceName).populate('serviceNameAliases');
+        let service = await ServiceModel.findById(serviceName).populate(serviceNameAliases);
         if(service!==null)
             return service.toObject();
         else
@@ -65,7 +65,7 @@ export class Persistence{
 
         findedService.save();
 
-        newAlias = AliasModel.findById(newAlias._id).populate('serviceParent');
+        newAlias = AliasModel.findById(newAlias._id).populate(serviceParent);
         return newAlias;
     }
 
@@ -76,11 +76,17 @@ export class Persistence{
     }
 
     public static async getAlias(aliasName: string): Promise<Alias>{
-        let alias = await AliasModel.findById(aliasName).populate('serviceParent');
+        let alias = await AliasModel.findById(aliasName).populate(serviceParent);
         if(alias!==null)
             return alias.toObject();
         else
             throw new Error(`alias with name '${aliasName}' not exsist!`);
+    }
+
+    public static async addNewType(_newType: ObjectType): Promise<ObjectType>{
+        let newType = new ObjectTypeModel(_newType);
+        let toret = await newType.save();
+        return toret.toObject();
     }
 
 }

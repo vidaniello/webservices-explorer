@@ -39,6 +39,8 @@ export class Http{
         Http.app.post('/newAlias/associate_to/:serviceName', Http.onNewAlias);
         Http.app.get('/getAlias/:aliasName', Http.onGetAlias);
         
+        Http.app.post('/newType', Http.onNewType);
+
         /* final interceptor
         Http.app.use((req, res, next) => {
             let i = 0;
@@ -102,6 +104,15 @@ export class Http{
     static async onGetAlias(req: Request, resp: Response){
         try {
             let toRet = await Persistence.getAlias(req.params['aliasName']);
+            resp.send(toRet);
+        } catch (error){
+            Http.onException(error, resp);
+        }
+    }
+
+    static async onNewType(req: Request, resp: Response){
+        try {
+            let toRet = await Persistence.addNewType(req.body);
             resp.send(toRet);
         } catch (error){
             Http.onException(error, resp);
