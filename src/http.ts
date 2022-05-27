@@ -2,6 +2,7 @@ import express, {Express, NextFunction, Request, Response} from 'express';
 import {Util} from './util';
 import {Persistence} from './persistence';
 import {StatusCodes} from 'http-status-codes';
+import { Service } from './entities/entities';
 
 export class Http{
 
@@ -40,6 +41,9 @@ export class Http{
         Http.app.get('/getAlias/:aliasName', Http.onGetAlias);
         
         Http.app.post('/newType', Http.onNewType);
+        Http.app.get('/getType/:objectTypeName', Http.onGetType);
+
+        Http.app.get('/getEndpoints/:serviceName/env/:environment', Http.onGetEndpoints);
 
         /* final interceptor
         Http.app.use((req, res, next) => {
@@ -50,7 +54,7 @@ export class Http{
     }
 
     static onHomePage(req: Request, resp: Response){
-        resp.send({appStatus: "Ok! "+new Date()});
+        resp.send({appStatus: "Ok! "+new Date(), environment: (Util.isDevelopEnvironment()? 'DEVELOP':'PRODUCTION')});
     }
 
     static onGetDbConnectionState(req: Request, resp: Response){
@@ -119,6 +123,27 @@ export class Http{
         }
     }
 
+    static async onGetType(req: Request, resp: Response){
+        try {
+            let toRet = await Persistence.getType(req.params['objectTypeName']);
+            resp.send(toRet);
+        } catch (error){
+            Http.onException(error, resp);
+        }
+    }
+
+    static async onGetEndpoints(req: Request, resp: Response){
+        try {
+            let serviceName = req.params['serviceName'];
+            let environment = req.params['environment'];
+
+            //let toRet = await Persistence.getEndpoints(req.params['objectTypeName']);
+            //resp.send(toRet);
+            resp.send({rep: "xc"});
+        } catch (error){
+            Http.onException(error, resp);
+        }
+    } 
 
     static onException(exception: Error | any, resp: Response){
         resp.status(StatusCodes.BAD_REQUEST)

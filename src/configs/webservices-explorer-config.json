@@ -9,5 +9,7 @@
     "dbPort_ENV_NAME": "DB_PORT",
     "dbUsername_ENV_NAME": "DB_USERNAME",
     "dbPassword_ENV_NAME": "DB_PASSWORD",
-    "databaseName": "WebservicesExplorerDb"
+    "databaseName": "WebservicesExplorerDb",
+    "environment_ENV_NAME": "ENVIRONMENT",
+    "develop_environment_name": "DEVELOP"
 }

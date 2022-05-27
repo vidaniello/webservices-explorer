@@ -27,10 +27,12 @@ export const AliasModel = model<Alias, AliasModelType>('Alias', aliasSchema);
 export class Endpoint{
     url: string;
     enabled: boolean;
+    environment: string;
 }
 const endpointSchema = new Schema<Endpoint>({
     url: {type: String},
-    enabled: {type: Boolean}
+    enabled: {type: Boolean},
+    environment: {type: String}
 }, {_id: false});
 
 
@@ -40,7 +42,7 @@ const endpointSchema = new Schema<Endpoint>({
 
 /** Service functions */
 export class AbstractParam {
-    name: string;
+    //name: string;
     description: string;
     format: string;
     required: boolean;
@@ -49,7 +51,7 @@ export class AbstractParam {
 export class PathParam extends AbstractParam {};
 export class QueryParam extends AbstractParam {};
 const abstractParamSchema = new Schema<AbstractParam>({
-    name: {type: String},
+    //name: {type: String},
     description: {type: String},
     format: {type: String},
     required: {type: Boolean},
@@ -83,16 +85,22 @@ export class ServiceFunction {
     path: string;
     method: HTTP_METHOD | string;
     description: string;
+    /*
     pathParams: PathParam[];
     queryParams: QueryParam[];
+    */
+    pathParams: Map<string, PathParam>;
+    queryParams: Map<string, QueryParam>;
     bodyContent: string;
     return: string;
     throws: ExceptionThrowed[];
     other: string;
 };
 type ServiceFunctionsProps = {
+    /*
     pathParams: Types.DocumentArray<PathParam>;
     queryParams: Types.DocumentArray<QueryParam>;
+    */
     throws: Types.DocumentArray<ExceptionThrowed>;
 };
 type ServiceFunctionsType = Model<ServiceFunction, {}, ServiceFunctionsProps>;
@@ -100,8 +108,12 @@ const serviceFunctionSchema = new Schema<ServiceFunction, ServiceFunctionsType>(
     path: {type: String},
     method: {type: String, enum: HTTP_METHOD},
     description: {type: String},
+    /*
     pathParams: [abstractParamSchema],
     queryParams: [abstractParamSchema],
+    */
+    pathParams: {type: Object},
+    queryParams: {type: Object},
     bodyContent: {type: String},
     return: {type: String},
     throws: [exceptionThrowedSchema],
@@ -153,7 +165,7 @@ export const ServiceModel = model<Service, ServiceModelType>('Service', serviceS
 
 
 /** Entity */
-export class FieldType {
+export interface FieldType {
     filedType: string;
     description: string;
     required: boolean;
@@ -164,22 +176,24 @@ const fieldTypeSchema = new Schema<FieldType>({
     required: {type: Boolean}
 }, {_id: false});
 
-export class ObjectType {
+export interface ObjectType {
+    _id: string;
     name: string;
     description: string;
     fields: Map<string, FieldType>;
 }
+
 type ObjectTypeProps = {
-    //fields: Types.
+    
 };
 type ObjectTypeType = Model<ObjectType, {}, ObjectTypeProps>;
-const objectTypeSchema = new Schema<ObjectType, ObjectTypeType>({
-    name: {type: String},
-    description: {type: String},
-    fields: {type: Map, of: fieldTypeSchema}
-});
-export const ObjectTypeModel = model<ObjectType, ObjectTypeType>('ObjectType', objectTypeSchema);
 
+const objectTypeSchema = new Schema<ObjectType, ObjectTypeType>({
+    _id: {type: String, alias: 'name'},
+    description: {type: String},
+    fields: {type: Object}
+}, {versionKey: false, timestamps: true, id: false, toObject: {virtuals: true}});
+export const ObjectTypeModel = model<ObjectType, ObjectTypeType>('ObjectType', objectTypeSchema);
 
 
 

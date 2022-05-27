@@ -69,6 +69,9 @@ export class Persistence{
         return newAlias;
     }
 
+
+
+
     public static async addNewAlias(_newAlias: Alias): Promise<Alias>{
         let newAlias = new AliasModel(_newAlias);
         let toret = await newAlias.save();
@@ -83,10 +86,36 @@ export class Persistence{
             throw new Error(`alias with name '${aliasName}' not exsist!`);
     }
 
+
+
+
+
     public static async addNewType(_newType: ObjectType): Promise<ObjectType>{
         let newType = new ObjectTypeModel(_newType);
         let toret = await newType.save();
         return toret.toObject();
+    }
+
+    public static async getType(typeName: string): Promise<ObjectType>{
+        let obType = await ObjectTypeModel.findById(typeName);
+        if(obType!==null)
+            return obType.toObject();
+        else
+            throw new Error(`type with name '${typeName}' not exsist!`);
+    }
+
+
+
+   
+    public static async getEndpoints(serviceName: string): Promise<string[]>;
+    public static async getEndpoints(serviceName: string, environment?: string): Promise<string[]>{
+        if(environment!==undefined){
+
+        }else{
+
+        }
+
+        return null
     }
 
 }

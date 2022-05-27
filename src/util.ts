@@ -115,8 +115,16 @@ export class Util {
         return ret;
     }
 
+    public static isDevelopEnvironment(){ 
+        if(process.env[this.conf.environment_ENV_NAME]!==undefined)
+            if(process.env[this.conf.environment_ENV_NAME]!==null)
+                if(process.env[this.conf.environment_ENV_NAME]==this.conf.develop_environment_name)
+                    return true;
+        return false;
+    }
+
     public static getMongoDbDatabase(){
-        return this.conf.databaseName;
+        return Util.isDevelopEnvironment() ? this.conf.databaseName+'_DEVELOP_ENVIRONMENT'  : this.conf.databaseName;
     }
 }
 //export default Util;
