@@ -43,7 +43,8 @@ export class Http{
         Http.app.post('/newType', Http.onNewType);
         Http.app.get('/getType/:objectTypeName', Http.onGetType);
 
-        Http.app.get('/getEndpoints/:serviceName/env/:environment', Http.onGetEndpoints);
+        Http.app.get('/getEndpoints/:serviceName/env/:environment?', Http.onGetEndpoints);
+        Http.app.get('/getEndpoints/:serviceName', Http.onGetEndpoints);
 
         /* final interceptor
         Http.app.use((req, res, next) => {
@@ -137,9 +138,11 @@ export class Http{
             let serviceName = req.params['serviceName'];
             let environment = req.params['environment'];
 
-            //let toRet = await Persistence.getEndpoints(req.params['objectTypeName']);
-            //resp.send(toRet);
-            resp.send({rep: "xc"});
+            if(environment==undefined)
+                return Persistence.getEndpoints(serviceName);
+            else
+                return Persistence.getEndpoints(serviceName, environment);
+
         } catch (error){
             Http.onException(error, resp);
         }

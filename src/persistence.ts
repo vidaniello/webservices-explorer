@@ -1,6 +1,6 @@
 import {Mongoose, connect, ConnectionStates} from 'mongoose';
 import {Util} from './util';
-import { Alias, AliasModel, Service, ServiceModel, serviceParent, serviceNameAliases, ObjectType, ObjectTypeModel} from './entities/entities';
+import {Alias, AliasModel, Service, ServiceModel, serviceParent, serviceNameAliases, ObjectType, ObjectTypeModel, Endpoint} from './entities/entities';
 
 /**
  * Persistence contetex to mongo DB.
@@ -105,13 +105,32 @@ export class Persistence{
     }
 
 
-
+    /**
+     * Cache for services, remember in case of deletion or modifies to clean it.
+     */
+    static cacheServices = new Map<string, Service>();
    
-    public static async getEndpoints(serviceName: string): Promise<string[]>;
     public static async getEndpoints(serviceName: string, environment?: string): Promise<string[]>{
+
+        //Cache
+        if(Persistence.cacheServices.has(serviceName)){
+            let ret = new Array<string>();
+            let serv = Persistence.cacheServices.get(serviceName);
+            serv.endpointsDeployed.forEach((endp)=>{
+                if(environment==undefined)
+                    ret.push(endp.url);
+                else
+                    if(endp.environment==environment)
+                        ret.push(endp.url);
+            });
+
+            return ret;
+        }
+
+       // ServiceModel.find().where('')
         if(environment!==undefined){
 
-        }else{
+        } else {
 
         }
 
