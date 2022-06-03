@@ -149,7 +149,7 @@ export class Http{
                 return Persistence.getEndpoints(serviceName);
             else*/
             
-            resp.send(await Persistence.getEndpoints(serviceName, environment));
+            resp.send(await Persistence.getEndpointsURL(serviceName, environment));
         } catch (error){
             Http.onException(error, resp);
         }

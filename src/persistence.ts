@@ -116,7 +116,7 @@ export class Persistence{
      */
     static cacheServices = new Map<string, Service>();
    
-    public static async getEndpoints(serviceName: string, environment?: string): Promise<string[]>{
+    public static async getEndpointsURL(serviceName: string, environment?: string): Promise<string[]>{
 
         //Finding in the cache
         if(Persistence.cacheServices.has(serviceName)){
@@ -126,7 +126,7 @@ export class Persistence{
             let serv: Service = await ServiceModel.findById( Persistence.cacheServices.get(serviceName).serviceName );
 
             if(serv!=null)
-                return Persistence.getEndpoitFromService(serv, environment);
+                return Persistence.getEndpointsURLFromService(serv, environment);
             
         }
 
@@ -148,7 +148,7 @@ export class Persistence{
         //Salvataggio in cache
         Persistence.cacheServices.set(serviceName, serv);
 
-        return Persistence.getEndpoitFromService(serv, environment);
+        return Persistence.getEndpointsURLFromService(serv, environment);
     }
 
     /**
@@ -157,7 +157,7 @@ export class Persistence{
      * @param environment 
      * @returns 
      */
-    static getEndpoitFromService(service: Service, environment?: string): string[]{
+    static getEndpointsURLFromService(service: Service, environment?: string): string[]{
         let ret = new Array<string>();
 
         service.endpointsDeployed
