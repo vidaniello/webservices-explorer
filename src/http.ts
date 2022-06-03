@@ -30,6 +30,7 @@ export class Http{
         Http.app.get('/', Http.onHomePage);
 
         Http.app.get('/closeApp', Http.onCloseApplication);
+        Http.app.get('/resetServiceCache', Http.onResetServiceCache);
 
         Http.app.get('/getDbConnectionState', Http.onGetDbConnectionState);
 
@@ -43,8 +44,8 @@ export class Http{
         Http.app.post('/newType', Http.onNewType);
         Http.app.get('/getType/:objectTypeName', Http.onGetType);
 
-        Http.app.get('/getEndpoints/:serviceName/env/:environment?', Http.onGetEndpoints);
-        Http.app.get('/getEndpoints/:serviceName', Http.onGetEndpoints);
+        Http.app.get('/getEndpointsURL/:serviceName/env/:environment?', Http.onGetEndpointsUrl);
+        Http.app.get('/getEndpointsURL/:serviceName', Http.onGetEndpointsUrl);
 
         /* final interceptor
         Http.app.use((req, res, next) => {
@@ -63,8 +64,14 @@ export class Http{
     }
 
     static onCloseApplication(req: Request, resp: Response){
-        resp.send({appStatus: "Closing app!"});
-        process.exit();
+        //resp.send({appStatus: "Closing app!"});
+        //process.exit();
+        Http.onException(new Error('Function disabled!'), resp);
+    }
+
+    static onResetServiceCache(req: Request, resp: Response){
+        Persistence.cacheServices.clear();
+        resp.send({cacheStatus: "Cache cleared!"});
     }
 
     static async onNewService(req: Request, resp: Response){
@@ -133,16 +140,16 @@ export class Http{
         }
     }
 
-    static async onGetEndpoints(req: Request, resp: Response){
+    static async onGetEndpointsUrl(req: Request, resp: Response){
         try {
             let serviceName = req.params['serviceName'];
             let environment = req.params['environment'];
 
-            if(environment==undefined)
+            /*if(environment==undefined)
                 return Persistence.getEndpoints(serviceName);
-            else
-                return Persistence.getEndpoints(serviceName, environment);
-
+            else*/
+            
+            resp.send(await Persistence.getEndpoints(serviceName, environment));
         } catch (error){
             Http.onException(error, resp);
         }

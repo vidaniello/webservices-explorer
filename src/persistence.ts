@@ -73,6 +73,12 @@ export class Persistence{
 
 
     public static async addNewAlias(_newAlias: Alias): Promise<Alias>{
+        
+        let serv: Service = await ServiceModel.findById(_newAlias.aliasName);
+
+        if(serv!=null)
+            throw new Error(`Error, there is a service  named '${_newAlias.aliasName}' with same name.`);
+
         let newAlias = new AliasModel(_newAlias);
         let toret = await newAlias.save();
         return toret.toObject();
@@ -106,17 +112,57 @@ export class Persistence{
 
 
     /**
-     * Cache for services, remember in case of deletion or modifies to clean it.
+     * Cache for services, remember in case of deletion or modification of the Services, clean it.
      */
     static cacheServices = new Map<string, Service>();
    
     public static async getEndpoints(serviceName: string, environment?: string): Promise<string[]>{
 
-        //Cache
+        //Finding in the cache
         if(Persistence.cacheServices.has(serviceName)){
-            let ret = new Array<string>();
-            let serv = Persistence.cacheServices.get(serviceName);
-            serv.endpointsDeployed.forEach((endp)=>{
+            
+
+            //Reload from persistence
+            let serv: Service = await ServiceModel.findById( Persistence.cacheServices.get(serviceName).serviceName );
+
+            if(serv!=null)
+                return Persistence.getEndpoitFromService(serv, environment);
+            
+        }
+
+        //Finding in the persistence
+        let serv: Service = await ServiceModel.findById(serviceName);
+
+        if(serv==null){
+            //Ricerca per Alias
+            let _alias: Alias = await AliasModel.findById(serviceName).populate(serviceParent);
+
+            if(_alias!=null)
+                if(_alias.serviceParent!=null)
+                    serv = _alias.serviceParent;
+        }
+
+        if(serv==null)
+            throw new Error(`Service with name '${serviceName}' not exist!`);
+
+        //Salvataggio in cache
+        Persistence.cacheServices.set(serviceName, serv);
+
+        return Persistence.getEndpoitFromService(serv, environment);
+    }
+
+    /**
+     * Get only url endpoints that are equal to environment if give, and only enabled endpoint.
+     * @param service 
+     * @param environment 
+     * @returns 
+     */
+    static getEndpoitFromService(service: Service, environment?: string): string[]{
+        let ret = new Array<string>();
+
+        service.endpointsDeployed
+            .filter((endp)=>endp.enabled)
+            .forEach((endp)=>{
                 if(environment==undefined)
                     ret.push(endp.url);
                 else
@@ -124,17 +170,7 @@ export class Persistence{
                         ret.push(endp.url);
             });
 
-            return ret;
-        }
-
-       // ServiceModel.find().where('')
-        if(environment!==undefined){
-
-        } else {
-
-        }
-
-        return null
+        return ret;
     }
 
 }
