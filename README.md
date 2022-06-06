@@ -92,17 +92,6 @@ All response, also the errors, are written with `Content-Type: application/json`
 
 &nbsp;
 
-- For shutdown the service (ATTENTION! THE COMMAND IS DISABLED, then launch an error json).
-  - Command: `hostname:PORT/closeApp`
-  - Method: `GET`
-  - Response: 
-
-        {
-            appStatus: "Closing app!"
-        }
-
-&nbsp;
-
 - Insert new Service.
    - Command: `hostname:PORT/newService`
    - Method: `POST`
