@@ -1,6 +1,8 @@
 test/
 tests/
 tsconfig.json
-tsconfig-test.json
 src/
 scripts/
+.vscode/
+.env
+clean-builds.js
