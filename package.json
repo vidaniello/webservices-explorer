@@ -13,7 +13,8 @@
     "test:main": "tsc && node ./dist/main.js",
     "test:test1": "node ./tests/test/test1.js",
     "test:install": "node ./dist/install.js",
-    "testMongo": "node test/mongoTests.js"
+    "testMongo": "node test/mongoTests.js",
+    "preinstall": "node clean-builds.js && tsc"
   },
   "publishConfig": {
     "access": "public"
