@@ -35,7 +35,7 @@ export class Http{
         Http.app.get('/getDbConnectionState', Http.onGetDbConnectionState);
 
         Http.app.post('/newService', Http.onNewService);
-        Http.app.get('/getService/:endpointName', Http.onGetService);
+        Http.app.get('/getService/:serviceName', Http.onGetService);
 
         Http.app.post('/newAlias', Http.onNewAlias);
         Http.app.post('/newAlias/associate_to/:serviceName', Http.onNewAlias);
@@ -85,7 +85,7 @@ export class Http{
 
     static async onGetService(req: Request, resp: Response, next: NextFunction){
         try {
-            let toRet = await Persistence.getService(req.params['endpointName']);
+            let toRet = await Persistence.getService(req.params['serviceName']);
             resp.send(toRet);
         } catch (error){
             Http.onException(error, resp);

@@ -40,6 +40,12 @@ export class Persistence{
 
     public static async addNewService(_newService: Service): Promise<Service>{
         let newService = new ServiceModel(_newService);
+
+        //Find if exsist an Alias with same Service name
+        let alias_ = Persistence.getAlias(_newService.serviceName);
+        if(alias_!=null)
+            throw new Error(`Error, there is an alias named '${_newService.serviceName}' with same name.`);
+
         let toret = await newService.save();
         return toret.toObject();
       }
@@ -164,7 +170,8 @@ export class Persistence{
             .filter((endp)=>endp.enabled)
             .forEach((endp)=>{
                 if(environment==undefined)
-                    ret.push(endp.url);
+                    if(endp.environment==undefined)
+                        ret.push(endp.url);
                 else
                     if(endp.environment==environment)
                         ret.push(endp.url);
