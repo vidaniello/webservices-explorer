@@ -1,4 +1,7 @@
 # Webservices Explorer
+
+[![npm version](https://badge.fury.io/js/@vidaniello%2Fwebservices-explorer.svg)](https://badge.fury.io/js/@vidaniello%2Fwebservices-explorer)
+
  Report deployed webservices in a network.
 
  ## Why
