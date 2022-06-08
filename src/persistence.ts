@@ -42,7 +42,7 @@ export class Persistence{
         let newService = new ServiceModel(_newService);
 
         //Find if exsist an Alias with same Service name
-        let alias_ = await Persistence.getAlias(_newService.serviceName);
+        let alias_ = await AliasModel.findById(_newService.serviceName);
         if(alias_!=null)
             throw new Error(`Error, there is an alias named '${_newService.serviceName}' with same name.`);
 
