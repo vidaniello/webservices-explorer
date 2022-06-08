@@ -51,6 +51,22 @@ All response, also the errors, are written with `Content-Type: application/json`
 
 &nbsp;
 
+### Error json throwned:
+
+In case of error, for example entity not finded, duplicate key, ecc.., the service thrown a `400` http status code, with a json object in the body response of that type:
+
+    {
+        exceptionType: [String, the name of class exception/error],
+        exceptionCode: [String or Number, the code of exception],
+        exceptionMessage: [String, the description of the error]
+    }
+
+&nbsp;
+
+### Functions:
+
+&nbsp;
+
 - Homepage, simply query the service.
   - Command: `hostname:PORT/`
   - Method: `GET`
