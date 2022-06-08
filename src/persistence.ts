@@ -169,12 +169,11 @@ export class Persistence{
         service.endpointsDeployed
             .filter((endp)=>endp.enabled)
             .forEach((endp)=>{
-                if(environment==undefined)
+                if(environment==undefined) {
                     if(endp.environment==undefined)
                         ret.push(endp.url);
-                else
-                    if(endp.environment==environment)
-                        ret.push(endp.url);
+                } else if(endp.environment==environment)
+                    ret.push(endp.url);
             });
 
         return ret;
