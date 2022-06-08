@@ -1,7 +1,7 @@
 {
   "type": "commonjs",
   "name": "@vidaniello/webservices-explorer",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "A way to discover webservice deployed in a network",
   "main": "./dist/Main.js",
   "scripts": {
