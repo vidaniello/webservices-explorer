@@ -54,7 +54,8 @@ All response, also the errors, are written with `Content-Type: application/json`
   - Response: 
 
         {
-            appStatus: "Ok!...."
+            appStatus: "Ok!....",
+            environment: [ENVIRONMENT INSTANCE TYPE]
         }
 
 &nbsp;
