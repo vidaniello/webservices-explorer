@@ -8,13 +8,13 @@
     "__build": "./scripts/build.sh",
     "__build-test": "./scripts/build-test.sh",
     "prebuild": "node clean-builds.js",
-    "build": "tsc",
-    "build:test": "node clean-builds.js && tsc -p ./test/tsconfig.json",
-    "test:main": "tsc && node ./dist/main.js",
+    "build": "npx tsc",
+    "build:test": "node clean-builds.js && npx tsc -p ./test/tsconfig.json",
+    "test:main": "npx tsc && node ./dist/main.js",
     "test:test1": "node ./tests/test/test1.js",
     "test:install": "node ./dist/install.js",
     "testMongo": "node test/mongoTests.js",
-    "prepare": "node clean-builds.js && tsc -p ./productionTs/tsconfig.json"
+    "prepare": "node clean-builds.js && npx tsc -p ./productionTs/tsconfig.json"
   },
   "publishConfig": {
     "access": "public"
@@ -47,6 +47,7 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.32",
-    "@types/prompt": "^1.1.2"
+    "@types/prompt": "^1.1.2",
+    "typescript": "^5.7.2"
   }
 }
